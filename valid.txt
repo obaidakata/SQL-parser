@@ -1,0 +1,12 @@
+SELECT Customers.Name FROM Customers WHERE Customers.Name='Mike';
+SELECT Customers.Name FROM Customers WHERE (Customers.Name='Mike') OR (Customers.Name='tyson');
+SELECT Customers.Name FROM Customers WHERE (Customers.Name='Mike')OR(Customers.Name='tyson');
+SELECT Customers.Name FROM Customers WHERE Customers.Name='Mike';
+SELECT Customers.Name,Orders.Price FROM Customers,Orders WHERE Customers.Name=Orders.CustomerName AND Orders.Price>1000;
+SELECT Customers.Name FROM Customers WHERE Customers.Age=25;
+SELECT DISTINCT Customers.Name FROM Customers WHERE Customers.Age=25;
+SELECT Customers.Name,Orders.Price FROM Customers,Orders WHERE Customers.Name=Orders.CustomerName;
+SELECT Customers.Name,Orders.Price FROM Customers,Orders WHERE (Customers.Name=Orders.CustomerName) AND Orders.Price>1000;
+SELECT Customers.Name,Orders.Price FROM Customers,Orders WHERE (Customers.Name=Orders.CustomerName) OR (Orders.Price>59);
+SELECT Customers.Name,Orders.Price FROM Customers,Orders WHERE (Customers.Name=Orders.CustomerName) OR (Orders.Price>1000) AND Customers.Name='Mike';
+SELECT Customers.Name,Orders.Price FROM Customers,Orders WHERE (Customers.Name=Orders.CustomerName) OR (Orders.Price>1000) AND Customers.Name='Mike';

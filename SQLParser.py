@@ -17,20 +17,23 @@ class SQLParser:
         self.m_Schema["Orders"] = {"CustomerName": "string", "Product": "string", "Price": "int"}
 
     def InitLegalOperators(self):
-        self.m_LegalOperators.append("<=")
-        self.m_LegalOperators.append(">=")
-        self.m_LegalOperators.append("<>")
-        self.m_LegalOperators.append("<")
-        self.m_LegalOperators.append(">")
-        self.m_LegalOperators.append("=")
+        self.m_LegalOperators = ["<=", ">=", "<>", "<", ">", "="]
 
     def Print(self):
         print(self.m_Query)
 
     def IsQueryValid(self):
-        self.m_IsQueryValid = self.select_parse()
-        self.m_IsQueryValid = self.m_IsQueryValid and self.from_parse()
-        self.m_IsQueryValid = self.m_IsQueryValid and self.where_parse()
+        self.m_IsQueryValid = False
+        if not self.areBracketsBalanced():
+            print("Failed Brackets Balanced test")
+        elif not self.select_parse():
+            print("Failed select test")
+        elif not self.from_parse():
+            print("Failed from test")
+        elif not self.where_parse():
+            print("Failed where test")
+        else:
+            self.m_IsQueryValid = True
         return self.m_IsQueryValid
 
     #######################################################################################################
@@ -61,10 +64,7 @@ class SQLParser:
                 if i_columnName == x:
                     return True
                 for y in self.m_Schema[x]:
-                    sp = i_columnName.split(".")
-                    print(sp)
-                    # What if sp[1] do not exist for example blahblah=25
-                    if i_columnName == x + "." + sp[1]:
+                    if i_columnName == x + "." + y:
                         return True
         return False
 
@@ -106,19 +106,20 @@ class SQLParser:
     def where_parse_helper(self, i_Query):
         if i_Query is None:
             return False
-        elif len(i_Query) == 0:
+        elif len(i_Query) == 1:
             return False
         elif self.IsSimpleCondition(i_Query):
-            return True
+            return self.checkCondition(i_Query)
         else:
             splittedCondition = self.splitCondition(i_Query)
-            if splittedCondition is None:
-                print(splittedCondition)
-            #Change to meaningful names
+            if splittedCondition is not None:
+                # Change to meaningful names
+                opxx = self.checkCondition(splittedCondition[0])
+                opyy = self.where_parse_helper(splittedCondition[2])
+                return (opxx is not None) and opyy
 
-            opxx = self.checkCondition(splittedCondition[0])
-            opyy = self.where_parse_helper(splittedCondition[2])
-            return (opxx is None) and opyy
+            else:
+                return False
 
     def splitCondition(self, condition):
         firstAnd = None
@@ -140,11 +141,11 @@ class SQLParser:
             minIndex = min(firstAnd, firstOR)
         else:
             print("Error")
-            return False
+            return None
 
         if toAdd is None:
             print("Error")
-            return False
+            return None
         else:
             leftCondition = condition[0:minIndex].strip(" ")
             logicOperator = condition[minIndex:minIndex + toAdd]
@@ -154,7 +155,7 @@ class SQLParser:
     def IsSimpleCondition(self, condition):
         andExist = "AND" in condition
         orExist = "OR" in condition
-        return (not andExist) and (not orExist) and self.checkCondition(condition)
+        return (not andExist) and (not orExist)
 
     def checkCondition(self, condition):
         condition = condition.replace('(', '')
@@ -169,23 +170,17 @@ class SQLParser:
             leftOperand = condition[0:operatorIndex]
             rightOperandStartInIndex = operatorIndex + operatorLength
             rightOperand = condition[rightOperandStartInIndex:len(condition)]
-            return self.checkIfSelectedColumnNameIsValid(leftOperand) and self.checkTypes(leftOperand, rightOperand)
+            # check if not double check
+            isLeftOperandValid = self.checkIfSelectedColumnNameIsValid(leftOperand)
+            isRightOperandValid = self.checkTypes(leftOperand, rightOperand)
+            return isLeftOperandValid and isRightOperandValid
 
         return False
 
     def checkTypes(self, leftOperand, rightOperand):
-        sp = leftOperand.split(".")
-        typeAsString = None
-        if sp[0] in self.m_Schema:
-            if(sp[1] in self.m_Schema[sp[0]]):
-                typeAsString = self.m_Schema[sp[0]][sp[1]]
-
-        if typeAsString == "int":
-            return rightOperand.isdecimal()
-        elif typeAsString == "string":
-            return True
-        else:
-            return False
+        leftOperandType = self.getOperandType(leftOperand)
+        rightOperandType = self.getOperandType(rightOperand)
+        return leftOperandType == rightOperandType
 
     def IsOperatorLegal(self, i_Operator):
         for operator in self.m_LegalOperators:
@@ -193,8 +188,32 @@ class SQLParser:
                 return False
         return True
 
+    def getOperandType(self, operand):
+        if operand.isdecimal():
+            return "int"
+        elif self.isString(operand):
+            return "string"
+        else:
+            sp = operand.split(".")
+            typeAsString = None
+            if sp[0] in self.m_Schema:
+                if (sp[1] in self.m_Schema[sp[0]]):
+                    typeAsString = self.m_Schema[sp[0]][sp[1]]
+            if typeAsString is not None:
+                return typeAsString
+
+    def isString(self, toCheck):
+        if '"' in toCheck:
+            toCheck = toCheck.replace('"', '')
+        if '\'' in toCheck:
+            toCheck = toCheck.replace('\'', '')
+        if '’' in toCheck:
+            toCheck = toCheck.replace('’', '')
+
+        return toCheck.isalpha()
+
+
     #########################################################################################
-    # switch ["(", "{", "["] to array
     def areBracketsBalanced(self):
         stack = []
         for char in self.m_Query:
