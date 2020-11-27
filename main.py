@@ -3,6 +3,7 @@ from SQLParser import SQLParser
 def main():
     query_to_parse = "SELECT     Customers.Name   ,   Orders.Price    FROM    Customers,   Orders    WHERE Customers.Name=Orders.CustomerName AND y = 5 AND Orders.Price>1000 AND y = 3;"
     query_to_parse2 = "SELECT Customers.Name, Orders.Price FROM Customers, Orders WHERE (Customers.Name = Orders.CustomerName) OR(Orders.Price > 59);"
+    x = 3
     file1 = open('test.txt', 'r')
     queries = file1.readlines()
     for query in queries:
