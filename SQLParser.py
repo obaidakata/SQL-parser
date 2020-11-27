@@ -23,17 +23,10 @@ class SQLParser:
         print(self.m_Query)
 
     def IsQueryValid(self):
-        self.m_IsQueryValid = False
-        if not self.areBracketsBalanced():
-            print("Failed Brackets Balanced test")
-        elif not self.select_parse():
-            print("Failed select test")
-        elif not self.from_parse():
-            print("Failed from test")
-        elif not self.where_parse():
-            print("Failed where test")
-        else:
-            self.m_IsQueryValid = True
+        self.m_IsQueryValid = self.areBracketsBalanced()
+        self.m_IsQueryValid = self.m_IsQueryValid and self.select_parse()
+        self.m_IsQueryValid = self.m_IsQueryValid and self.from_parse()
+        self.m_IsQueryValid = self.m_IsQueryValid and self.where_parse()
         return self.m_IsQueryValid
 
     #######################################################################################################
@@ -50,11 +43,15 @@ class SQLParser:
         if len == 1:
             return True
         elif not self.checkIfSelectedColumnNameIsValid(words[len - 1]):
+            #Maybe there is easier way
+            str1 = ''.join(str(e) + " " for e in words)
+            print("Parsing <", str1, "> failed")
             return False
         else:
             return self.select_parse_Helper(words, len - 1)
 
     def checkIfSelectedColumnNameIsValid(self, i_columnName):
+        i_columnName = i_columnName.replace(" ", "")
         if i_columnName == "*":
             return True
         elif i_columnName == "DISTINCT":
@@ -80,7 +77,9 @@ class SQLParser:
         if len == 1:
             return True
         elif not self.checkIfFromParams(words[len - 1]):
-            print(words[len - 1], " Not Exist")
+            # Maybe there is easier way
+            str1 = ''.join(str(e) + " " for e in words)
+            print("Parsing <", str1, "> failed")
             return False
         else:
             return self.from_parse_Helper(words, len - 1)
@@ -109,13 +108,18 @@ class SQLParser:
         elif len(i_Query) == 1:
             return False
         elif self.IsSimpleCondition(i_Query):
-            return self.checkCondition(i_Query)
+            isConditionValid = self.checkCondition(i_Query)
+            if not isConditionValid:
+                print("Parsing <", i_Query, "> failed")
+            return isConditionValid
         else:
             splittedCondition = self.splitCondition(i_Query)
             if splittedCondition is not None:
                 # Change to meaningful names
                 opxx = self.checkCondition(splittedCondition[0])
                 opyy = self.where_parse_helper(splittedCondition[2])
+                if (opxx is None) or (not opyy):
+                    print("Parsing <", i_Query, "> failed")
                 return (opxx is not None) and opyy
 
             else:

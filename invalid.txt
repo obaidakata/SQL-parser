@@ -1,6 +1,9 @@
+SELECT Customers.shshs FROM Customers.Name WHERE Customers.Age = 50;
+SELECT Customers FROM Customers.shsh WHERE Customers.Age = 50;
+SELECT Customers FROM Customora WHERE Customers.Age = 50;
 SELECT Customers.Name FROM Customers WHERE 50 = Customers.Age;
 SELECT Customers.Name FROM Customers WHERE *=50;
-SELECT Customers.Name FROM Customers WHERE      Attribute      = 'mike'      and   Attribute2      >        59
+SELECT Customers.Name FROM Customers WHERE      Customers.Age      = 'mike'      and   Customers.Name      >        59;
 SELECT Customers.Money FROM Customers WHERE Customers.Age='Mike';
 SELECT Customers.Name FROM Customers WHERE Customers.Name=25;
 SELECT DISTINCT Customers.Name FROM Customers WHERE Customers.Age='Momo';
@@ -12,3 +15,6 @@ SELECT Customers.Name,Orders.Price FROM Customers,Orders WHERE (Customers.Name=O
 SELECT Customers.Color,Orders.Price FROM Customers,Orders WHERE (Customers.Name=Orders.CustomerName) OR (Orders.Price>1000;
 SELECT Customers.Name FROM Customers WHERE (Customers.Name='Mike') Or (Customers.Name='tyson');
 SELECT Customers.Name FROM Customers WHERE (Customers.Name='Mike') AnD (Customers.Name='tyson');
+SELECT Customers FROM Customers WHERE (Customers.Name='Mike') AnD (Customers.Name='tyson');
+SELECT * FROM Customers WHERE (Customers.Name='Mike') AnD (Customers.Name='tyson');
+SELECT Customers.Color,Orders.Price FROM Customers,Orders WHERE (Customers.Name=Orders.CustomerName) OR (Orders.Price>1000;

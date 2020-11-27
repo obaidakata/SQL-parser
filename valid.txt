@@ -1,3 +1,5 @@
+SELECT Customers.Name FROM Customers WHERE (Customers.Name='Mike' AND Orders.Price = 7) OR Customers.Age = 55;
+SELECT Customers.Name FROM Customers WHERE (Customers.Name='Mike' AND Orders.Price = 7) OR (Customers.Age = 55 AND Customers.Name=Orders.CustomerName);
 SELECT Customers.Name FROM Customers WHERE Customers.Name='Mike';
 SELECT Customers.Name FROM Customers WHERE (Customers.Name='Mike') OR (Customers.Name='tyson');
 SELECT Customers.Name FROM Customers WHERE (Customers.Name='Mike')OR(Customers.Name='tyson');
@@ -10,3 +12,6 @@ SELECT Customers.Name,Orders.Price FROM Customers,Orders WHERE (Customers.Name=O
 SELECT Customers.Name,Orders.Price FROM Customers,Orders WHERE (Customers.Name=Orders.CustomerName) OR (Orders.Price>59);
 SELECT Customers.Name,Orders.Price FROM Customers,Orders WHERE (Customers.Name=Orders.CustomerName) OR (Orders.Price>1000) AND Customers.Name='Mike';
 SELECT Customers.Name,Orders.Price FROM Customers,Orders WHERE (Customers.Name=Orders.CustomerName) OR (Orders.Price>1000) AND Customers.Name='Mike';
+SELECT * FROM * WHERE Customers.Name='Mike';
+SELECT * FROM * WHERE Customers.Name='ksdcdkjcpidkcdlckd';
+SELECT * FROM * WHERE (((((Customers.Name='jfvfvf')) and (Customers.Age = 55)) AND Orders.Price>59));
