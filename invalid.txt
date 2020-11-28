@@ -17,4 +17,4 @@ SELECT Customers.Name FROM Customers WHERE (Customers.Name='Mike') Or (Customers
 SELECT Customers.Name FROM Customers WHERE (Customers.Name='Mike') AnD (Customers.Name='tyson');
 SELECT Customers FROM Customers WHERE (Customers.Name='Mike') AnD (Customers.Name='tyson');
 SELECT * FROM Customers WHERE (Customers.Name='Mike') AnD (Customers.Name='tyson');
-SELECT Customers.Color,Orders.Price FROM Customers,Orders WHERE (Customers.Name=Orders.CustomerName) OR (Orders.Price>1000;
+SELECT Customers.Name,Orders.Price FROM Customers,Orders WHERE (Customers.Name=Orders.CustomerName) OR (Orders.Price>1000;

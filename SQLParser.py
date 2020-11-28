@@ -23,8 +23,7 @@ class SQLParser:
         print(self.m_Query)
 
     def IsQueryValid(self):
-        self.m_IsQueryValid = self.areBracketsBalanced()
-        self.m_IsQueryValid = self.m_IsQueryValid and self.select_parse()
+        self.m_IsQueryValid = self.select_parse()
         self.m_IsQueryValid = self.m_IsQueryValid and self.from_parse()
         self.m_IsQueryValid = self.m_IsQueryValid and self.where_parse()
         return self.m_IsQueryValid
@@ -100,6 +99,10 @@ class SQLParser:
         whereIndex = self.m_Query.find("WHERE") + 6  # what if no space after WHERE
         length = self.m_Query.find(";")
         where_sub_query = self.m_Query[whereIndex:length]
+        #print(where_sub_query)
+        # isBracketsValid = self.areBracketsBalanced(where_sub_query)
+        # if isBracketsValid is False:
+        #     print("Parsing <", where_sub_query, "> failed")
         return self.where_parse_helper(where_sub_query)
 
     def where_parse_helper(self, i_Query):
@@ -115,13 +118,13 @@ class SQLParser:
         else:
             splittedCondition = self.splitCondition(i_Query)
             if splittedCondition is not None:
-                # Change to meaningful names
-                opxx = self.checkCondition(splittedCondition[0])
-                opyy = self.where_parse_helper(splittedCondition[2])
-                if (opxx is None) or (not opyy):
+                leftSubCondition = self.checkCondition(splittedCondition[0])
+                if not leftSubCondition:
                     print("Parsing <", i_Query, "> failed")
-                return (opxx is not None) and opyy
-
+                    return False
+                else:
+                    rightSubCondition = self.where_parse_helper(splittedCondition[2])
+                    return (leftSubCondition is not None) and rightSubCondition
             else:
                 return False
 
@@ -162,6 +165,8 @@ class SQLParser:
         return (not andExist) and (not orExist)
 
     def checkCondition(self, condition):
+        if self.areBracketsBalanced(condition) is False:
+            return False
         condition = condition.replace('(', '')
         condition = condition.replace(')', '')
         operatorIndex = None
@@ -218,9 +223,9 @@ class SQLParser:
 
 
     #########################################################################################
-    def areBracketsBalanced(self):
+    def areBracketsBalanced(self, i_Query):
         stack = []
-        for char in self.m_Query:
+        for char in i_Query:
             if char == "(":
                 stack.append(char)
             else:
