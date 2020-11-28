@@ -42,9 +42,7 @@ class SQLParser:
         if len == 1:
             return True
         elif not self.checkIfSelectedColumnNameIsValid(words[len - 1]):
-            #Maybe there is easier way
-            str1 = ''.join(str(e) + " " for e in words)
-            print("Parsing <", str1, "> failed")
+            print("Parsing <", words[len - 1], "> failed")
             return False
         else:
             return self.select_parse_Helper(words, len - 1)
@@ -78,7 +76,9 @@ class SQLParser:
         elif not self.checkIfFromParams(words[len - 1]):
             # Maybe there is easier way
             str1 = ''.join(str(e) + " " for e in words)
-            print("Parsing <", str1, "> failed")
+            strToPrint = str1.split("FROM")
+            strToPrint[1] = strToPrint[1].strip()
+            print("Parsing <", strToPrint[1], "> failed")
             return False
         else:
             return self.from_parse_Helper(words, len - 1)
@@ -96,13 +96,12 @@ class SQLParser:
     #########################################################################################
     # WHERE
     def where_parse(self):
-        whereIndex = self.m_Query.find("WHERE") + 6  # what if no space after WHERE
-        length = self.m_Query.find(";")
-        where_sub_query = self.m_Query[whereIndex:length]
-        #print(where_sub_query)
-        # isBracketsValid = self.areBracketsBalanced(where_sub_query)
-        # if isBracketsValid is False:
-        #     print("Parsing <", where_sub_query, "> failed")
+        query = self.m_Query.split("WHERE")
+        where_sub_query = query[1].strip().strip(";")
+
+        if not self.areBracketsBalanced(where_sub_query):
+            print("Parsing <", where_sub_query, "> failed")
+            return False
         return self.where_parse_helper(where_sub_query)
 
     def where_parse_helper(self, i_Query):
@@ -135,17 +134,22 @@ class SQLParser:
         minIndex = None
         if "AND" in condition:
             firstAnd = condition.find("AND")
-            toAdd = 3
         if "OR" in condition:
             firstOR = condition.find("OR")
-            toAdd = 2
 
         if firstAnd is None and firstOR is not None:
             minIndex = firstOR
+            toAdd = 2
         elif firstOR is None and firstAnd is not None:
             minIndex = firstAnd
+            toAdd = 3
         elif firstOR is not None and firstAnd is not None:
-            minIndex = min(firstAnd, firstOR)
+            if firstAnd < firstOR:
+                toAdd = 3
+                minIndex = firstAnd
+            else:
+                toAdd = 2
+                minIndex = firstOR
         else:
             print("Error")
             return None
@@ -165,8 +169,6 @@ class SQLParser:
         return (not andExist) and (not orExist)
 
     def checkCondition(self, condition):
-        if self.areBracketsBalanced(condition) is False:
-            return False
         condition = condition.replace('(', '')
         condition = condition.replace(')', '')
         operatorIndex = None
@@ -232,10 +234,9 @@ class SQLParser:
                 if char == ")":
                     if not stack:  # check if stack is empty.
                         return False
-                    current_char = stack.pop()
-                    if current_char == '(':
-                        if char != ")":
-                            return False
+                    stack.pop()
 
         # Check Empty Stack
-        return not stack
+        if stack:
+            return False
+        return True

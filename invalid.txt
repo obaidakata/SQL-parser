@@ -1,3 +1,4 @@
+SELECT Customers.Color,Orders.Pri FROM Customers,Orders WHERE (Customers.Name=Orders.CustomerName) OR (Orders.Price>1000;
 SELECT Customers.shshs FROM Customers.Name WHERE Customers.Age = 50;
 SELECT Customers FROM Customers.shsh WHERE Customers.Age = 50;
 SELECT Customers FROM Customora WHERE Customers.Age = 50;
@@ -11,7 +12,6 @@ SELECT DISTINCT * FROM Customers WHERE Customers.Age='Momo';
 SELECT Customers.Name,Orders.Price FROM Customers,Orders WHERE Customers.Name=Orders.Customer.Name;
 SELECT Customers.Name,Orders.Price FROM Customers,Orders WHERE Customers.Name=Orders.Customer.Age;
 SELECT Customers.Name,Orders.Price FROM Customers,Orders WHERE Customers.Name=Orders.CustomerName AND Orders.Price>'gogo';
-SELECT Customers.Name,Orders.Price FROM Customers,Orders WHERE (Customers.Name=Orders.CustomerName) OR (Orders.Price>1000;
 SELECT Customers.Color,Orders.Price FROM Customers,Orders WHERE (Customers.Name=Orders.CustomerName) OR (Orders.Price>1000;
 SELECT Customers.Name FROM Customers WHERE (Customers.Name='Mike') Or (Customers.Name='tyson');
 SELECT Customers.Name FROM Customers WHERE (Customers.Name='Mike') AnD (Customers.Name='tyson');
