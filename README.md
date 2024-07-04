@@ -8,8 +8,8 @@ Customers(Name: STRING, Age: INTEGER)
 Orders(CustomerName: STRING, Product: STRING, Price: INTEGER)
 
 The code will return true for the following queries :
-SELECT Customers.Name FROM Customers WHERE Customer.Age=25;
-SELECT Customers.Name FROM Customers WHERE Customer.Name=’Mike’;
+SELECT Customers.Name FROM Customers WHERE Customers.Age=25;
+SELECT Customers.Name FROM Customers WHERE Customers.Name=’Mike’;
 
 
 and false for the following queries :
